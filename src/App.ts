@@ -1,19 +1,10 @@
 import { Header } from "./components/Header";
+import { getCars } from "./api/carsApi";
 
 export class App {
-  public init(): void {
-    this.render();
-  }
+  public async init(): Promise<void> {
+    const cars = await getCars();
 
-  private render(): void {
-    const app = document.querySelector("#app");
-
-    if (!app) {
-      return;
-    }
-
-    const header = new Header();
-
-    app.append(header.render());
+    console.log(cars);
   }
 }
