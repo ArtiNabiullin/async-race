@@ -1,10 +1,15 @@
-import { Header } from "./components/Header";
-import { getCars } from "./api/carsApi";
+import { GarageService } from "./services/garageService";
+import { GarageView } from "./views/GarageView";
 
 export class App {
-  public async init(): Promise<void> {
-    const cars = await getCars();
+  private readonly garageService = new GarageService();
+  private readonly garageView = new GarageView();
 
-    console.log(cars);
+  public async init(): Promise<void> {
+    const cars = await this.garageService.getGarage();
+
+    const view = this.garageView.render(cars);
+
+    document.body.append(view);
   }
 }
