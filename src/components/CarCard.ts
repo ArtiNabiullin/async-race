@@ -1,28 +1,34 @@
 import type { Car } from "../models/car";
+import { CarControls } from "./CarControls";
 
 export class CarCard {
   public render(car: Car): HTMLElement {
-    const element = document.createElement("div");
-    element.className = "card h-100";
+    const card = document.createElement("div");
+    card.className = "card h-100";
 
-    element.innerHTML = `
-      <div class="card-body">
+    const body = this.createBody(car);
 
-      <h5 class="card-title">
-        ${car.name}
-      </h5>
+    card.append(body);
 
-      <p class="card-text">
-        Color: ${car.color}
-      </p>
+    return card;
+  }
 
-      <button class="btn btn-success">
-        Start
-      </button>
+  private createBody(car: Car): HTMLElement {
+    const body = document.createElement("div");
+    body.className = "card-body";
 
-      </div>
-    `;
+    const title = document.createElement("h5");
+    title.className = "card-title";
+    title.textContent = car.name;
 
-    return element;
+    const color = document.createElement("p");
+    color.className = "card-text";
+    color.textContent = `Color: ${car.color}`;
+
+    const controls = new CarControls();
+
+    body.append(title, color, controls.render(car));
+
+    return body;
   }
 }
