@@ -1,5 +1,6 @@
 import type { Car } from "../models/car";
 import { CarControls } from "./CarControls";
+import { CarSvg } from "./CarSvg";
 
 export class CarCard {
   public render(car: Car): HTMLElement {
@@ -27,7 +28,9 @@ export class CarCard {
 
     const controls = new CarControls();
 
-    body.append(title, color, controls.render(car));
+    const carSvg = new CarSvg();
+
+    body.append(title, color, carSvg.render(car), controls.render(car));
 
     return body;
   }
