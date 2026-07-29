@@ -1,15 +1,23 @@
-import type { Car } from "../models/car";
+import type { Car, CarData } from "../models/car";
 import { CarCard } from "../components/CarCard";
+import { CarForm } from "../components/CarForm";
 
 export class GarageView {
   private readonly carCard = new CarCard();
+  private readonly carForm = new CarForm();
 
-  public render(cars: Car[], onRemove: (id: number) => void): HTMLElement {
+  public render(
+    cars: Car[],
+    onRemove: (id: number) => void,
+    onCreate: (carData: CarData) => void,
+  ): HTMLElement {
     const container = document.createElement("div");
 
     container.className = "container";
 
     const title = this.createTitle();
+
+    const form = this.carForm.render(onCreate);
 
     const list = this.createCarsList();
 
@@ -23,7 +31,7 @@ export class GarageView {
       list.append(column);
     });
 
-    container.append(title, list);
+    container.append(title, form, list);
 
     return container;
   }

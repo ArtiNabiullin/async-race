@@ -1,6 +1,7 @@
 import { GarageService } from "./services/garageService";
 import { AppState } from "./state/AppState";
 import { GarageView } from "./views/GarageView";
+import type { CarData } from "./models/car";
 
 export class App {
   private readonly garageService = new GarageService();
@@ -17,11 +18,19 @@ export class App {
       await this.init();
     };
 
-    this.render(removeCar);
+    const createCar = async (carData: CarData): Promise<void> => {
+      await this.garageService.createGarageCar(carData);
+      await this.init();
+    };
+
+    this.render(removeCar, createCar);
   }
 
-  private render(onRemove: (id: number) => void): void {
-    const view = this.garageView.render(this.state.cars, onRemove);
+  private render(
+    onRemove: (id: number) => void,
+    onCreate: (carData: CarData) => void,
+  ): void {
+    const view = this.garageView.render(this.state.cars, onRemove, onCreate);
 
     const root = document.querySelector("#app");
 

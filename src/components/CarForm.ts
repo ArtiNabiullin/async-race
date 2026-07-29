@@ -1,5 +1,7 @@
+import type { CarData } from "../models/car";
+
 export class CarForm {
-  public render(): HTMLFormElement {
+  public render(onCreate: (carData: CarData) => void): HTMLFormElement {
     const form = document.createElement("form");
     form.className = "d-flex gap-2 mb-4";
 
@@ -18,6 +20,17 @@ export class CarForm {
     createButton.type = "submit";
     createButton.className = "btn btn-success";
     createButton.textContent = "Create";
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const carData: CarData = {
+        name: nameInput.value.trim(),
+        color: colorInput.value,
+      };
+
+      onCreate(carData);
+    });
 
     form.append(nameInput, colorInput, createButton);
 
