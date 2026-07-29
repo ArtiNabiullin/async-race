@@ -15,4 +15,8 @@ export class GarageService {
   public async createGarageCar(carData: CarData): Promise<Car> {
     return this.carsApi.createCar(carData);
   }
+
+  public async updateGarageCar(id: number, carData: CarData): Promise<Car> {
+    return this.carsApi.updateCar(id, carData);
+  }
 }

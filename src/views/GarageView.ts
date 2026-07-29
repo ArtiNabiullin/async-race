@@ -11,6 +11,7 @@ export class GarageView {
     onRemove: (id: number) => void,
     onCreate: (carData: CarData) => void,
     onSelect: (id: number) => void,
+    selectedCar: Car | null = null,
   ): HTMLElement {
     const container = document.createElement("div");
 
@@ -18,7 +19,7 @@ export class GarageView {
 
     const title = this.createTitle();
 
-    const form = this.carForm.render(onCreate);
+    const form = this.carForm.render(onCreate, selectedCar);
 
     const list = this.createCarsList();
 

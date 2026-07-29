@@ -36,4 +36,21 @@ export class CarsApi {
 
     return car;
   }
+
+  public async updateCar(id: number, carData: CarData): Promise<Car> {
+    const response = await fetch(`${BASE_URL}/garage/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(carData),
+    });
+
+    if (!response) {
+      throw new Error("Failed to update car");
+    }
+    const car: Car = await response.json();
+
+    return car;
+  }
 }

@@ -18,16 +18,28 @@ export class App {
       await this.init();
     };
 
-    const createCar = async (carData: CarData): Promise<void> => {
-      await this.garageService.createGarageCar(carData);
+    const saveCar = async (carData: CarData): Promise<void> => {
+      if (this.state.selectedCarId === null) {
+        await this.garageService.createGarageCar(carData);
+      } else {
+        await this.garageService.updateGarageCar(
+          this.state.selectedCarId,
+          carData,
+        );
+
+        this.state.selectedCarId = null;
+      }
+
       await this.init();
     };
 
     const selectCar = (id: number): void => {
       this.state.selectedCarId = id;
+
+      this.render(removeCar, saveCar, selectCar);
     };
 
-    this.render(removeCar, createCar, selectCar);
+    this.render(removeCar, saveCar, selectCar);
   }
 
   private render(
@@ -35,11 +47,16 @@ export class App {
     onCreate: (carData: CarData) => void,
     onSelect: (id: number) => void,
   ): void {
+    const selectedCar =
+      this.state.cars.find((car) => car.id === this.state.selectedCarId) ??
+      null;
+
     const view = this.garageView.render(
       this.state.cars,
       onRemove,
       onCreate,
       onSelect,
+      selectedCar,
     );
 
     const root = document.querySelector("#app");
