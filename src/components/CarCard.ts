@@ -3,18 +3,26 @@ import { CarControls } from "./CarControls";
 import { CarSvg } from "./CarSvg";
 
 export class CarCard {
-  public render(car: Car, onRemove: (id: number) => void): HTMLElement {
+  public render(
+    car: Car,
+    onRemove: (id: number) => void,
+    onSelect: (id: number) => void,
+  ): HTMLElement {
     const card = document.createElement("div");
     card.className = "card h-100 overflow-hidden";
 
-    const body = this.createBody(car, onRemove);
+    const body = this.createBody(car, onRemove, onSelect);
 
     card.append(body);
 
     return card;
   }
 
-  private createBody(car: Car, onRemove: (id: number) => void): HTMLElement {
+  private createBody(
+    car: Car,
+    onRemove: (id: number) => void,
+    onSelect: (id: number) => void,
+  ): HTMLElement {
     const body = document.createElement("div");
     body.className = "card-body";
 
@@ -34,7 +42,7 @@ export class CarCard {
       title,
       color,
       carSvg.render(car),
-      controls.render(car, onRemove),
+      controls.render(car, onRemove, onSelect),
     );
 
     return body;

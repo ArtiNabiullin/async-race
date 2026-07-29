@@ -1,12 +1,17 @@
 import type { Car } from "../models/car";
 
 export class CarControls {
-  public render(car: Car, onRemove: (id: number) => void): HTMLElement {
+  public render(
+    car: Car,
+    onRemove: (id: number) => void,
+    onSelect: (id: number) => void,
+  ): HTMLElement {
     const container = document.createElement("div");
     container.className = "d-flex flex-wrap gap-2";
 
     const selectButton = this.createButton("Select", "btn-primary");
     selectButton.dataset.id = String(car.id);
+    selectButton.addEventListener("click", () => onSelect(car.id));
 
     const removeButton = this.createButton("Remove", "btn-danger");
     removeButton.dataset.id = String(car.id);

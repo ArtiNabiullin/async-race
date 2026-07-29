@@ -23,14 +23,24 @@ export class App {
       await this.init();
     };
 
-    this.render(removeCar, createCar);
+    const selectCar = (id: number): void => {
+      this.state.selectedCarId = id;
+    };
+
+    this.render(removeCar, createCar, selectCar);
   }
 
   private render(
     onRemove: (id: number) => void,
     onCreate: (carData: CarData) => void,
+    onSelect: (id: number) => void,
   ): void {
-    const view = this.garageView.render(this.state.cars, onRemove, onCreate);
+    const view = this.garageView.render(
+      this.state.cars,
+      onRemove,
+      onCreate,
+      onSelect,
+    );
 
     const root = document.querySelector("#app");
 

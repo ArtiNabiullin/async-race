@@ -10,6 +10,7 @@ export class GarageView {
     cars: Car[],
     onRemove: (id: number) => void,
     onCreate: (carData: CarData) => void,
+    onSelect: (id: number) => void,
   ): HTMLElement {
     const container = document.createElement("div");
 
@@ -26,7 +27,7 @@ export class GarageView {
 
       column.className = "col-12 col-md-4";
 
-      column.append(this.carCard.render(car, onRemove));
+      column.append(this.carCard.render(car, onRemove, onSelect));
 
       list.append(column);
     });

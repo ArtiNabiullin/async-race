@@ -7,4 +7,6 @@ export class AppState {
   public winnersPage = 1;
 
   public currentView = "garage";
+
+  public selectedCarId: number | null = null;
 }
