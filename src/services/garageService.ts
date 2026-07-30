@@ -1,11 +1,11 @@
 import { CarsApi } from "../api/carsApi";
-import type { Car, CarData } from "../models/car";
+import type { Car, CarData, CarsPage } from "../models/car";
 
 export class GarageService {
   private readonly carsApi = new CarsApi();
 
-  public async getGarage(): Promise<Car[]> {
-    return this.carsApi.getCars();
+  public async getGarage(page: number, limit: number): Promise<CarsPage> {
+    return this.carsApi.getCars(page, limit);
   }
 
   public async deleteGarageCar(id: number): Promise<void> {

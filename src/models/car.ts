@@ -6,3 +6,8 @@ export interface CarData {
 export interface Car extends CarData {
   id: number;
 }
+
+export interface CarsPage {
+  cars: Car[];
+  totalCount: number;
+}

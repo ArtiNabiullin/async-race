@@ -1,17 +1,35 @@
 import type { Car, CarData } from "../models/car";
 import { CarCard } from "../components/CarCard";
 import { CarForm } from "../components/CarForm";
+import { Pagination } from "../components/Pagination";
 
 export class GarageView {
   private readonly carCard = new CarCard();
   private readonly carForm = new CarForm();
+  private readonly pagination = new Pagination();
+
+  private createGarageInfo(
+    currentPage: number,
+    totalCount: number,
+  ): HTMLParagraphElement {
+    const info = document.createElement("p");
+
+    info.className = "text-muted mb-3";
+    info.textContent = `Page: ${currentPage} | Total cars: ${totalCount}`;
+
+    return info;
+  }
 
   public render(
     cars: Car[],
     onRemove: (id: number) => void,
     onCreate: (carData: CarData) => void,
     onSelect: (id: number) => void,
-    selectedCar: Car | null = null,
+    selectedCar: Car | null,
+    currentPage: number,
+    totalCount: number,
+    pageSize: number,
+    onPageChange: (page: number) => void,
   ): HTMLElement {
     const container = document.createElement("div");
 
@@ -19,9 +37,18 @@ export class GarageView {
 
     const title = this.createTitle();
 
+    const garageInfo = this.createGarageInfo(currentPage, totalCount);
+
     const form = this.carForm.render(onCreate, selectedCar);
 
     const list = this.createCarsList();
+
+    const pagination = this.pagination.render(
+      currentPage,
+      totalCount,
+      pageSize,
+      onPageChange,
+    );
 
     cars.forEach((car) => {
       const column = document.createElement("div");
@@ -33,7 +60,7 @@ export class GarageView {
       list.append(column);
     });
 
-    container.append(title, form, list);
+    container.append(title, garageInfo, form, list, pagination);
 
     return container;
   }

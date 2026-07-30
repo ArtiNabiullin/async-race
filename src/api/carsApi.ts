@@ -1,13 +1,34 @@
-import type { Car, CarData } from "../models/car";
+import type { Car, CarData, CarsPage } from "../models/car";
 
 const BASE_URL = "http://localhost:3000";
 export class CarsApi {
-  public async getCars(): Promise<Car[]> {
-    const response = await fetch(`${BASE_URL}/garage`);
+  public async getCars(page: number, limit: number): Promise<CarsPage> {
+    const params = new URLSearchParams({
+      _page: String(page),
+      _limit: String(limit),
+    });
+
+    const response = await fetch(`${BASE_URL}/garage?${params.toString()}`);
+
+    if (!response.ok) {
+      throw new Error("Failed to get cars");
+    }
+
+    const totalCountHeader = response.headers.get("X-Total-Count");
+
+    if (totalCountHeader === null) {
+      throw new Error("Total count header is missing");
+    }
+
+    const totalCount = Number(totalCountHeader);
+
+    if (!Number.isInteger(totalCount)) {
+      throw new Error("Total count is invalid");
+    }
 
     const cars: Car[] = await response.json();
 
-    return cars;
+    return { cars, totalCount };
   }
 
   public async deleteCars(id: number): Promise<void> {
