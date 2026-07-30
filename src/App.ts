@@ -1,6 +1,7 @@
 import { GarageService } from "./services/garageService";
 import { AppState } from "./state/AppState";
 import { GarageView } from "./views/GarageView";
+import { createRandomCarData } from "./utils/randomCars";
 import type { CarData } from "./models/car";
 
 const GARAGE_PAGE_SIZE = 7;
@@ -45,13 +46,20 @@ export class App {
       await this.init();
     };
 
+    const generateCars = async (): Promise<void> => {
+      const carsData = Array.from({ length: 100 }, () => createRandomCarData());
+
+      await this.garageService.createGarageCars(carsData);
+      await this.init();
+    };
+
     const selectCar = (id: number): void => {
       this.state.selectedCarId = id;
 
-      this.render(removeCar, saveCar, selectCar, changePage);
+      this.render(removeCar, saveCar, selectCar, changePage, generateCars);
     };
 
-    this.render(removeCar, saveCar, selectCar, changePage);
+    this.render(removeCar, saveCar, selectCar, changePage, generateCars);
   }
 
   private render(
@@ -59,6 +67,7 @@ export class App {
     onCreate: (carData: CarData) => void,
     onSelect: (id: number) => void,
     onPageChange: (page: number) => void,
+    onGenerate: () => void,
   ): void {
     const selectedCar =
       this.state.cars.find((car) => car.id === this.state.selectedCarId) ??
@@ -74,6 +83,7 @@ export class App {
       this.state.garageTotal,
       GARAGE_PAGE_SIZE,
       onPageChange,
+      onGenerate,
     );
 
     const root = document.querySelector("#app");

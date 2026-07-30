@@ -19,4 +19,10 @@ export class GarageService {
   public async updateGarageCar(id: number, carData: CarData): Promise<Car> {
     return this.carsApi.updateCar(id, carData);
   }
+
+  public async createGarageCars(carsData: CarData[]): Promise<void> {
+    await Promise.all(
+      carsData.map((carData) => this.carsApi.createCar(carData)),
+    );
+  }
 }

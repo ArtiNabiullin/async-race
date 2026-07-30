@@ -30,6 +30,7 @@ export class GarageView {
     totalCount: number,
     pageSize: number,
     onPageChange: (page: number) => void,
+    onGenerate: () => void,
   ): HTMLElement {
     const container = document.createElement("div");
 
@@ -40,6 +41,8 @@ export class GarageView {
     const garageInfo = this.createGarageInfo(currentPage, totalCount);
 
     const form = this.carForm.render(onCreate, selectedCar);
+
+    const generateButton = this.createGenerateButton(onGenerate);
 
     const list = this.createCarsList();
 
@@ -60,7 +63,7 @@ export class GarageView {
       list.append(column);
     });
 
-    container.append(title, garageInfo, form, list, pagination);
+    container.append(title, garageInfo, form, generateButton, list, pagination);
 
     return container;
   }
@@ -79,5 +82,17 @@ export class GarageView {
     list.className = "row g-3";
 
     return list;
+  }
+
+  private createGenerateButton(onGenerate: () => void): HTMLButtonElement {
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.className = "btn btn-secondary mb-3";
+    button.textContent = "Generate 100 cars";
+
+    button.addEventListener("click", () => onGenerate());
+
+    return button;
   }
 }
