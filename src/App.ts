@@ -25,17 +25,22 @@ export class App {
       await this.init();
     };
 
-    const saveCar = async (carData: CarData): Promise<void> => {
-      if (this.state.selectedCarId === null) {
-        await this.garageService.createGarageCar(carData);
-      } else {
-        await this.garageService.updateGarageCar(
-          this.state.selectedCarId,
-          carData,
-        );
+    const createCar = async (carData: CarData): Promise<void> => {
+      await this.garageService.createGarageCar(carData);
 
-        this.state.selectedCarId = null;
+      await this.init();
+    };
+
+    const updateCar = async (carData: CarData): Promise<void> => {
+      const selectedCarId = this.state.selectedCarId;
+
+      if (selectedCarId === null) {
+        return;
       }
+
+      await this.garageService.updateGarageCar(selectedCarId, carData);
+
+      this.state.selectedCarId = null;
 
       await this.init();
     };
@@ -56,15 +61,30 @@ export class App {
     const selectCar = (id: number): void => {
       this.state.selectedCarId = id;
 
-      this.render(removeCar, saveCar, selectCar, changePage, generateCars);
+      this.render(
+        removeCar,
+        createCar,
+        updateCar,
+        selectCar,
+        changePage,
+        generateCars,
+      );
     };
 
-    this.render(removeCar, saveCar, selectCar, changePage, generateCars);
+    this.render(
+      removeCar,
+      createCar,
+      updateCar,
+      selectCar,
+      changePage,
+      generateCars,
+    );
   }
 
   private render(
     onRemove: (id: number) => void,
     onCreate: (carData: CarData) => void,
+    onUpdate: (carData: CarData) => void,
     onSelect: (id: number) => void,
     onPageChange: (page: number) => void,
     onGenerate: () => void,
@@ -77,6 +97,7 @@ export class App {
       this.state.cars,
       onRemove,
       onCreate,
+      onUpdate,
       onSelect,
       selectedCar,
       this.state.garagePage,

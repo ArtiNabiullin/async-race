@@ -24,6 +24,7 @@ export class GarageView {
     cars: Car[],
     onRemove: (id: number) => void,
     onCreate: (carData: CarData) => void,
+    onUpdate: (carData: CarData) => void,
     onSelect: (id: number) => void,
     selectedCar: Car | null,
     currentPage: number,
@@ -40,7 +41,32 @@ export class GarageView {
 
     const garageInfo = this.createGarageInfo(currentPage, totalCount);
 
-    const form = this.carForm.render(onCreate, selectedCar);
+    const createForm = this.carForm.render(onCreate, null, "Create");
+
+    const updateForm = this.carForm.render(
+      onUpdate,
+      selectedCar,
+      "Update",
+      selectedCar === null,
+    );
+
+    const forms = document.createElement("div");
+
+    forms.className = "row g-3 mb-4";
+
+    const createColumn = document.createElement("div");
+
+    createColumn.className = "col-12 col-md-6";
+
+    createColumn.append(createForm);
+
+    const updateColumn = document.createElement("div");
+
+    updateColumn.className = "col-12 col-md-6";
+
+    updateColumn.append(updateForm);
+
+    forms.append(createColumn, updateColumn);
 
     const generateButton = this.createGenerateButton(onGenerate);
 
@@ -63,7 +89,14 @@ export class GarageView {
       list.append(column);
     });
 
-    container.append(title, garageInfo, form, generateButton, list, pagination);
+    container.append(
+      title,
+      garageInfo,
+      forms,
+      generateButton,
+      list,
+      pagination,
+    );
 
     return container;
   }

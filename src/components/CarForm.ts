@@ -2,13 +2,17 @@ import type { Car, CarData } from "../models/car";
 
 export class CarForm {
   public render(
-    onCreate: (carData: CarData) => void,
+    onSave: (carData: CarData) => void,
     selectedCar: Car | null = null,
+    buttonText = selectedCar === null ? "Create" : "Update",
+    isDisabled = false,
   ): HTMLFormElement {
     const form = document.createElement("form");
+
     form.className = "d-flex gap-2 mb-4";
 
     const nameInput = document.createElement("input");
+
     nameInput.type = "text";
     nameInput.placeholder = "Car name";
     nameInput.required = true;
@@ -16,14 +20,17 @@ export class CarForm {
     nameInput.value = selectedCar?.name ?? "";
 
     const colorInput = document.createElement("input");
+
     colorInput.type = "color";
     colorInput.value = selectedCar?.color ?? "#000000";
     colorInput.className = "form-control form-control-color";
 
-    const createButton = document.createElement("button");
-    createButton.type = "submit";
-    createButton.className = "btn btn-success";
-    createButton.textContent = selectedCar ? "Update" : "Create";
+    const formButton = document.createElement("button");
+
+    formButton.type = "submit";
+    formButton.className = "btn btn-success";
+    formButton.textContent = buttonText;
+    formButton.disabled = isDisabled;
 
     form.addEventListener("submit", (event) => {
       event.preventDefault();
@@ -33,10 +40,10 @@ export class CarForm {
         color: colorInput.value,
       };
 
-      onCreate(carData);
+      onSave(carData);
     });
 
-    form.append(nameInput, colorInput, createButton);
+    form.append(nameInput, colorInput, formButton);
 
     return form;
   }
