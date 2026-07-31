@@ -32,6 +32,9 @@ export class GarageView {
     pageSize: number,
     onPageChange: (page: number) => void,
     onGenerate: () => void,
+    onStart: (id: number, element: SVGElement) => void,
+    onStop: (id: number, element: SVGElement) => void,
+    drivingCarIds: Set<number>,
   ): HTMLElement {
     const container = document.createElement("div");
 
@@ -80,11 +83,22 @@ export class GarageView {
     );
 
     cars.forEach((car) => {
+      const isDriving = drivingCarIds.has(car.id);
+
       const column = document.createElement("div");
 
       column.className = "col-12 col-md-4";
 
-      column.append(this.carCard.render(car, onRemove, onSelect));
+      column.append(
+        this.carCard.render(
+          car,
+          onRemove,
+          onSelect,
+          onStart,
+          onStop,
+          isDriving,
+        ),
+      );
 
       list.append(column);
     });

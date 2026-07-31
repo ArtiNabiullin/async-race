@@ -2,6 +2,8 @@ import { GarageService } from "./services/garageService";
 import { AppState } from "./state/AppState";
 import { GarageView } from "./views/GarageView";
 import { createRandomCarData } from "./utils/randomCars";
+import { EngineService } from "./services/engineService";
+import { AnimationService } from "./services/animationService";
 import type { CarData } from "./models/car";
 
 const GARAGE_PAGE_SIZE = 7;
@@ -10,6 +12,10 @@ export class App {
   private readonly garageService = new GarageService();
   private readonly garageView = new GarageView();
   private readonly state = new AppState();
+  private readonly engineService = new EngineService();
+  private readonly animationService = new AnimationService();
+
+  private readonly animationStops = new Map<number, () => void>();
 
   public async init(): Promise<void> {
     const garageData = await this.garageService.getGarage(
@@ -19,6 +25,64 @@ export class App {
 
     this.state.cars = garageData.cars;
     this.state.garageTotal = garageData.totalCount;
+
+    const startCar = async (id: number, element: SVGElement): Promise<void> => {
+      this.state.drivingCarIds.add(id);
+
+      try {
+        const engineResponse = await this.engineService.startEngine(id);
+
+        const track = element.parentElement;
+
+        if (!track) {
+          this.state.drivingCarIds.delete(id);
+
+          return;
+        }
+
+        const targetDistance = Math.max(
+          track.clientWidth - element.getBoundingClientRect().width,
+          0,
+        );
+
+        const duration =
+          engineResponse.distance / Math.max(engineResponse.velocity, 1);
+
+        const stopAnimation = this.animationService.animate(
+          element,
+          duration,
+          targetDistance,
+          () => {
+            this.animationStops.delete(id);
+          },
+        );
+
+        this.animationStops.set(id, stopAnimation);
+
+        await this.engineService.driveEngine(id);
+      } catch {
+        this.state.drivingCarIds.delete(id);
+
+        const currentStop = this.animationStops.get(id);
+
+        currentStop?.();
+        this.animationStops.delete(id);
+      }
+    };
+
+    const stopCar = async (id: number, element: SVGElement): Promise<void> => {
+      await this.engineService.stopEngine(id);
+
+      this.state.drivingCarIds.delete(id);
+
+      const stopAnimation = this.animationStops.get(id);
+
+      stopAnimation?.();
+
+      this.animationStops.delete(id);
+
+      element.style.transform = "translateX(0)";
+    };
 
     const removeCar = async (id: number): Promise<void> => {
       await this.garageService.deleteGarageCar(id);
@@ -68,6 +132,8 @@ export class App {
         selectCar,
         changePage,
         generateCars,
+        startCar,
+        stopCar,
       );
     };
 
@@ -78,6 +144,8 @@ export class App {
       selectCar,
       changePage,
       generateCars,
+      startCar,
+      stopCar,
     );
   }
 
@@ -88,6 +156,8 @@ export class App {
     onSelect: (id: number) => void,
     onPageChange: (page: number) => void,
     onGenerate: () => void,
+    onStart: (id: number, element: SVGElement) => void,
+    onStop: (id: number, element: SVGElement) => void,
   ): void {
     const selectedCar =
       this.state.cars.find((car) => car.id === this.state.selectedCarId) ??
@@ -105,6 +175,9 @@ export class App {
       GARAGE_PAGE_SIZE,
       onPageChange,
       onGenerate,
+      onStart,
+      onStop,
+      this.state.drivingCarIds,
     );
 
     const root = document.querySelector("#app");

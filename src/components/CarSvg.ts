@@ -4,6 +4,8 @@ export class CarSvg {
   public render(car: Car): SVGElement {
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
+    svg.classList.add("car-svg");
+
     svg.setAttribute("width", "100");
     svg.setAttribute("height", "50");
 

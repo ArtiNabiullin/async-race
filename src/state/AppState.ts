@@ -11,4 +11,6 @@ export class AppState {
   public currentView = "garage";
 
   public selectedCarId: number | null = null;
+
+  public drivingCarIds = new Set<number>();
 }
